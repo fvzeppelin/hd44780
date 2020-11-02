@@ -132,7 +132,7 @@ def lcd_init():
     lcd_byte(0x0C,config.lcd_cmd)
     lcd_byte(0x06,config.lcd_cmd)
     lcd_byte(0x01,config.lcd_cmd)
-    GPIO.output(10,True)
+    GPIO.output(config.lcd_light,True)
         
 # HD44780 clear Display
 def lcd_cls(speed):
@@ -150,7 +150,11 @@ def lcd_cls(speed):
 # HD44780 Backlight on/off
 def lcd_backlight(what):
     GPIO.output(config.lcd_light, what)
-   
+    if (what):
+        lcd_byte(0x0c, config.lcd_cmd)
+    else:
+        lcd_byte(0x08, config.lcd_cmd)
+
 ## systemstuff
 def handler(signum, frame):
     lcd_cls('fast')
@@ -165,8 +169,10 @@ def handler(signum, frame):
     sys.exit()
 
 def getCpuTemperature():
-    res = os.popen('vcgencmd measure_temp').readline() 
-    return(res.replace("temp=","").replace("'C\n",""))
+    #res = os.popen('vcgencmd measure_temp').readline() 
+    #return(res.replace("temp=","").replace("'C\n",""))
+    file = open('/sys/class/thermal/thermal_zone0/temp', 'r')
+    return( str(round(int(file.read())/1000,1)) )
     
 ## Textstuff
 def center_text (Display_Lines,text):
@@ -234,7 +240,7 @@ if not lms_unaviable():
                          
 try:
   while True:
-    cputemp = (getCpuTemperature())
+    cputemperature = (getCpuTemperature())
     info = ['power', 'mode', 'time', 'artist', 'album', 'title', 'genre', 'cputemperature']
     for question in info:
         if not lms_unaviable():
@@ -319,7 +325,7 @@ try:
                     lcd(1,answer)
                     lcd(2,time.strftime("     %d.%m.%Y"))
                     lcd(3,time.strftime("       %H:%M"))
-                    lcd(4,(cputemp))
+                    lcd(4,(cputemperature))
               
               if config.act_as_clock == 'forever':
                  break

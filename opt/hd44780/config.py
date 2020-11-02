@@ -19,7 +19,9 @@ import subprocess
 ## if you want squeezelite to find Logitech Media Server (lms):
 ## uncomment the following line.
 ## lms = subprocess.check_output("netstat |grep '3483'|cut -d ' ' -f21|cut -d':' -f1|tr -d '\n'", shell=True)
-lms = subprocess.check_output("netstat |grep '3483'|cut -d ' ' -f21|cut -d':' -f1|tr -d '\n'", shell=True)
+#lms = subprocess.check_output("netstat |grep '3483'|cut -d ' ' -f21|cut -d':' -f1|tr -d '\n'", shell=True)
+lms = subprocess.check_output("netstat |grep '3483'|tr -s ' '|cut -d ' ' -f5|cut -d ':' -f1|tr -d '\n'", shell=True)
+#lms = '192.168.2.76'
 
 ## The MAC Adress from your Raspberry
 ## You should set mac static eg. mac = '80:1f:02:f7:ca:fe'
